@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -45,13 +46,13 @@ public class BSPTree {
         List<DefaultMutableTreeNode> nodes = new ArrayList<>();
 
         // iterate over breadth first order
-        Enumeration<DefaultMutableTreeNode> en = root.breadthFirstEnumeration();
+        Enumeration<TreeNode> en = root.breadthFirstEnumeration();
         while (en.hasMoreElements()) {
-            DefaultMutableTreeNode node = en.nextElement();
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
             nodes.add(node);
         }
 
-        // reverse list breadth frist order
+        // reverse list breadth first order
         Collections.reverse(nodes);
 
         return nodes;

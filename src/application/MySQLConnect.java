@@ -4,10 +4,13 @@
  */
 package application;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.Properties;
 
 /**
- *
  * @author 2014130020
  */
 public class MySQLConnect {
@@ -16,28 +19,43 @@ public class MySQLConnect {
 
     public static MySQLConnect getInstance() {
         if (instance == null) {
-            instance = new MySQLConnect();
+            ClassLoader classLoader = MySQLConnect.class.getClassLoader();
+
+            Properties properties = new Properties();
+            try (InputStream inputStream = classLoader.getResourceAsStream("config.properties")) {
+                properties.load(inputStream);
+            } catch (IOException ignored) {
+            }
+
+            instance = new MySQLConnect(properties);
         }
         return instance;
     }
-    
+
     private Connection connection;
 
-    private MySQLConnect() {
+    private final Properties properties;
+
+    private MySQLConnect(Properties properties) {
+        this.properties = properties;
     }
 
     public void start() {
         try {
             try {
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName(properties.getProperty("db.driver"));
             } catch (ClassNotFoundException ex) {
             }
 
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/UAS2017A_2014130020","root","andregokil");
+            String url = properties.getProperty("db.url");
+            String username = properties.getProperty("db.username");
+            String password = properties.getProperty("db.password");
+
+            connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
         }
         if (connection == null) {
-            System.out.println("Gagal koneksi");
+            System.err.println("Connection failed");
         }
     }
 
